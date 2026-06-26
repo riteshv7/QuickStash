@@ -3,9 +3,6 @@
   "name": "QuickStash",
   "version": "1.0",
   "description": "A browser-resident idea inbox and today's to-do board.",
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
-  },
   "permissions": [
     "storage",
     "scripting",

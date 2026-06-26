@@ -14,10 +14,11 @@ chrome.commands.onCommand.addListener((command) => {
 
 // Listen for toolbar icon click
 chrome.action.onClicked.addListener((tab) => {
-  handleAction(tab);
+  // Always open the dashboard when the user clicks the toolbar icon
+  openDashboard();
 });
 
-// Common handler for both hotkey and toolbar click
+// Common handler for the hotkey command
 function handleAction(tab) {
   if (!tab || !tab.id) {
     console.warn("No active tab found.");
@@ -52,7 +53,7 @@ function handleAction(tab) {
 
 // Helper to open the dashboard in a new tab
 function openDashboard() {
-  chrome.tabs.create({ url: "chrome://newtab/" });
+  chrome.tabs.create({ url: chrome.runtime.getURL("newtab.html") });
 }
 
 // Listen for messages from the injected capture-overlay
