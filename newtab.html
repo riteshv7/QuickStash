@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickStash — Focus Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-dot"></div>
+        <h1 id="app-title">QuickStash</h1>
+      </div>
+      <div class="date-area" id="current-date">Today</div>
+    </header>
+
+    <main class="board-grid">
+      <!-- Left Column: Ideas Inbox -->
+      <section class="board-column" id="inbox-section" aria-labelledby="inbox-title">
+        <div class="column-header">
+          <div class="column-title-wrap">
+            <h2 id="inbox-title">Inbox</h2>
+            <span class="badge" id="ideas-count">0</span>
+          </div>
+          <p class="column-subtitle">Raw captured ideas & links</p>
+        </div>
+        <div class="column-content">
+          <div class="ideas-list" id="ideas-list" role="list">
+            <!-- Ideas injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Today's To-Dos -->
+      <section class="board-column" id="today-section" aria-labelledby="today-title">
+        <div class="column-header">
+          <div class="column-title-wrap">
+            <h2 id="today-title">Today</h2>
+            <span class="badge" id="todos-count">0</span>
+          </div>
+          <p class="column-subtitle">Committed tasks to get done</p>
+        </div>
+        
+        <div class="todo-input-container">
+          <input 
+            type="text" 
+            id="todo-input" 
+            placeholder="Add a task for today..." 
+            autocomplete="off" 
+            aria-label="Add a task for today"
+          >
+          <div class="input-focus-border"></div>
+        </div>
+
+        <div class="column-content">
+          <div class="todos-list" id="todos-list" role="list">
+            <!-- To-dos injected by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="newtab.js"></script>
+</body>
+</html>
