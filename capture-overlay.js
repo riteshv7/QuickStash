@@ -1,6 +1,8 @@
 // QuickStash — On-page Capture Overlay (Phase 2)
 (function () {
   const OVERLAY_ID = "quickstash-capture-overlay-container";
+  const MODE_IDEA = "idea";
+  const MODE_TODO = "todo";
 
   // Check if overlay is already open to avoid duplicates
   if (document.getElementById(OVERLAY_ID)) {
@@ -112,6 +114,38 @@
         position: relative;
         width: 100%;
       }
+
+      .tabs {
+        display: inline-flex;
+        gap: 0.5rem;
+        margin-bottom: 0.875rem;
+      }
+
+      .tab-button {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: #94a3b8;
+        border-radius: 999px;
+        padding: 0.45rem 0.8rem;
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .tab-button:hover {
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #cbd5e1;
+      }
+
+      .tab-button.active {
+        background: rgba(129, 140, 248, 0.18);
+        border-color: rgba(129, 140, 248, 0.45);
+        color: #f8fafc;
+        box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.12);
+      }
       
       input[type="text"] {
         width: 100%;
@@ -161,6 +195,10 @@
             <span><span class="shortcut-badge">Enter</span> stash</span>
           </div>
         </div>
+        <div class="tabs" role="tablist" aria-label="Capture mode">
+          <button type="button" class="tab-button active" id="idea-tab" data-mode="idea" role="tab" aria-selected="true">💡 Idea</button>
+          <button type="button" class="tab-button" id="todo-tab" data-mode="todo" role="tab" aria-selected="false">✅ To-do</button>
+        </div>
         <div class="input-wrapper">
           <input 
             type="text" 
@@ -197,8 +235,32 @@
 
   document.body.appendChild(root);
 
-  // Focus input field immediately
   const input = shadow.getElementById("idea-input");
+  const tabButtons = Array.from(shadow.querySelectorAll(".tab-button"));
+  let currentMode = MODE_IDEA;
+
+  function updateMode(nextMode) {
+    currentMode = nextMode === MODE_TODO ? MODE_TODO : MODE_IDEA;
+    tabButtons.forEach((button) => {
+      const isActive = button.dataset.mode === currentMode;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+    });
+    input.placeholder = currentMode === MODE_IDEA
+      ? "Capture a quick thought or idea..."
+      : "Add a quick to-do...";
+  }
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      updateMode(button.dataset.mode);
+      input.focus();
+    });
+  });
+
+  updateMode(MODE_IDEA);
+
+  // Focus input field immediately
   if (input) {
     // Small timeout ensures focus fires cleanly after DOM paint
     setTimeout(() => input.focus(), 80);
@@ -244,18 +306,21 @@
       const text = input.value.trim();
       
       if (text !== "") {
-        // Capture page metadata
-        const url = window.location.href;
-        const title = document.title || url;
+        const payload = {
+          action: "save-idea",
+          mode: currentMode,
+          text: text
+        };
+
+        if (currentMode === MODE_IDEA) {
+          const url = window.location.href;
+          payload.url = url;
+          payload.title = document.title || url;
+        }
         
         // Send message to background script to perform the storage sync write
         chrome.runtime.sendMessage(
-          {
-            action: "save-idea",
-            text: text,
-            url: url,
-            title: title
-          },
+          payload,
           (response) => {
             if (chrome.runtime.lastError) {
               console.error("QuickStash save error:", chrome.runtime.lastError.message);
