@@ -395,6 +395,52 @@ function initEventHandlers() {
   });
 }
 
+// Theme Management
+let currentTheme = "system";
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  const rootEl = document.documentElement;
+  
+  if (theme === "dark") {
+    rootEl.classList.add("dark-theme");
+    rootEl.classList.remove("light-theme");
+  } else if (theme === "light") {
+    rootEl.classList.add("light-theme");
+    rootEl.classList.remove("dark-theme");
+  } else {
+    rootEl.classList.remove("dark-theme");
+    rootEl.classList.remove("light-theme");
+  }
+  
+  // Highlight active selector button
+  const buttons = document.querySelectorAll(".theme-btn");
+  buttons.forEach(btn => {
+    const isActive = btn.dataset.theme === theme;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-checked", String(isActive));
+  });
+}
+
+function initTheme() {
+  chrome.storage.sync.get("theme", (result) => {
+    const savedTheme = result.theme || "system";
+    applyTheme(savedTheme);
+  });
+
+  const selector = document.getElementById("theme-selector");
+  if (selector) {
+    selector.addEventListener("click", (e) => {
+      const btn = e.target.closest(".theme-btn");
+      if (btn) {
+        const theme = btn.dataset.theme;
+        applyTheme(theme);
+        chrome.storage.sync.set({ theme });
+      }
+    });
+  }
+}
+
 // Watch for storage changes (updates dashboard dynamically across multiple open tabs/windows)
 function initStorageListener() {
   chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -411,12 +457,16 @@ function initStorageListener() {
         localNotes = changes.notes.newValue || [];
         renderNotes(localNotes);
       }
+      if (changes.theme) {
+        applyTheme(changes.theme.newValue || "system");
+      }
     }
   });
 }
 
 // Boot
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   initHeaderDate();
   loadFromStorage();
   initEventHandlers();
