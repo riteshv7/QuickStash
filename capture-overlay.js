@@ -38,6 +38,12 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         box-sizing: border-box;
       }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
       
       .backdrop {
         position: absolute;
@@ -59,8 +65,7 @@
         background: rgba(247, 248, 245, 0.96);
         border: 1px solid rgba(31, 43, 38, 0.16);
         border-radius: 12px;
-        width: 520px;
-        max-width: 90%;
+        width: min(720px, calc(100vw - 2rem));
         padding: 1.25rem 1.5rem;
         box-shadow: 0 28px 70px rgba(22, 33, 29, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.75);
         transform: translateY(-20px);
@@ -169,6 +174,172 @@
       input[type="text"]::placeholder {
         color: #7a8781;
       }
+
+      .preview-panel {
+        display: none;
+        margin-top: 0.875rem;
+        border: 1px solid rgba(31, 43, 38, 0.12);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.62);
+        overflow: hidden;
+      }
+
+      .preview-panel.visible {
+        display: block;
+      }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(31, 43, 38, 0.1);
+        padding: 0.75rem 0.875rem;
+      }
+
+      .preview-title {
+        color: #16211d;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .preview-count {
+        min-width: 1.45rem;
+        border: 1px solid rgba(47, 125, 104, 0.18);
+        border-radius: 999px;
+        background: rgba(47, 125, 104, 0.08);
+        color: #2f7d68;
+        display: inline-grid;
+        place-items: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0.32rem 0.48rem;
+      }
+
+      .preview-list {
+        max-height: min(34vh, 280px);
+        overflow-y: auto;
+        padding: 0.45rem;
+      }
+
+      .preview-item {
+        display: grid;
+        gap: 0.3rem;
+        border-radius: 8px;
+        padding: 0.65rem 0.7rem;
+        color: #16211d;
+      }
+
+      .preview-item + .preview-item {
+        border-top: 1px solid rgba(31, 43, 38, 0.08);
+      }
+
+      .preview-item.done {
+        color: #7a8781;
+      }
+
+      .preview-row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.55rem;
+      }
+
+      .preview-row.note-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .preview-check {
+        width: 0.9rem;
+        height: 0.9rem;
+        border: 1px solid rgba(31, 43, 38, 0.22);
+        border-radius: 4px;
+        background: #ffffff;
+      }
+
+      .preview-item.done .preview-check {
+        border-color: #2f7d68;
+        background: #2f7d68;
+        box-shadow: inset 0 0 0 3px #2f7d68;
+      }
+
+      .preview-text,
+      .preview-note-title,
+      .preview-note-body {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .preview-text {
+        font-size: 0.86rem;
+        line-height: 1.35;
+      }
+
+      .preview-item.done .preview-text {
+        text-decoration: line-through;
+      }
+
+      .preview-time {
+        color: #7a8781;
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .preview-note-title {
+        color: #16211d;
+        font-size: 0.86rem;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+
+      .preview-note-body {
+        color: #53625b;
+        font-size: 0.8rem;
+        line-height: 1.38;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .preview-empty,
+      .preview-loading {
+        color: #7a8781;
+        font-size: 0.82rem;
+        line-height: 1.4;
+        padding: 1.15rem 0.875rem;
+        text-align: center;
+      }
+
+      @media (max-width: 560px) {
+        .backdrop {
+          padding: 1rem;
+          padding-top: 10vh;
+        }
+
+        .card {
+          padding: 1rem;
+        }
+
+        .header {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.65rem;
+        }
+
+        .tabs {
+          width: 100%;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .tab-button {
+          padding-left: 0.55rem;
+          padding-right: 0.55rem;
+        }
+      }
       
       /* Keyframes */
       @keyframes fadeIn {
@@ -209,6 +380,15 @@
             autocomplete="off"
           >
         </div>
+        <div class="preview-panel" id="mode-preview" aria-live="polite">
+          <div class="preview-header">
+            <span class="preview-title" id="preview-title">Saved items</span>
+            <span class="preview-count" id="preview-count">0</span>
+          </div>
+          <div class="preview-list" id="preview-list">
+            <div class="preview-loading">Loading saved items...</div>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -238,7 +418,115 @@
 
   const input = shadow.getElementById("idea-input");
   const tabButtons = Array.from(shadow.querySelectorAll(".tab-button"));
+  const previewPanel = shadow.getElementById("mode-preview");
+  const previewTitle = shadow.getElementById("preview-title");
+  const previewCount = shadow.getElementById("preview-count");
+  const previewList = shadow.getElementById("preview-list");
   let currentMode = MODE_IDEA;
+  let localTodos = [];
+  let localNotes = [];
+  let hasLoadedLists = false;
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function formatRelativeTime(timestamp) {
+    const diff = Date.now() - timestamp;
+    const mins = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (mins < 1) return "now";
+    if (mins < 60) return `${mins}m`;
+    if (hours < 24) return `${hours}h`;
+    return `${days}d`;
+  }
+
+  function renderPreview() {
+    if (currentMode === MODE_IDEA) {
+      previewPanel.classList.remove("visible");
+      return;
+    }
+
+    previewPanel.classList.add("visible");
+
+    if (!hasLoadedLists) {
+      previewTitle.textContent = currentMode === MODE_TODO ? "Today's to-dos" : "Quick notes";
+      previewCount.textContent = "0";
+      previewList.innerHTML = `<div class="preview-loading">Loading saved items...</div>`;
+      return;
+    }
+
+    if (currentMode === MODE_TODO) {
+      const sortedTodos = [...localTodos].sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        return b.ts - a.ts;
+      });
+      previewTitle.textContent = "Today's to-dos";
+      previewCount.textContent = sortedTodos.length;
+
+      if (sortedTodos.length === 0) {
+        previewList.innerHTML = `<div class="preview-empty">No to-dos yet. Add one above and press Enter.</div>`;
+        return;
+      }
+
+      previewList.innerHTML = sortedTodos.map((todo) => `
+        <div class="preview-item ${todo.done ? "done" : ""}">
+          <div class="preview-row">
+            <span class="preview-check" aria-hidden="true"></span>
+            <span class="preview-text">${escapeHtml(todo.text)}</span>
+            <span class="preview-time">${formatRelativeTime(todo.ts)}</span>
+          </div>
+        </div>
+      `).join("");
+      return;
+    }
+
+    const sortedNotes = [...localNotes].sort((a, b) => b.ts - a.ts);
+    previewTitle.textContent = "Quick notes";
+    previewCount.textContent = sortedNotes.length;
+
+    if (sortedNotes.length === 0) {
+      previewList.innerHTML = `<div class="preview-empty">No quick notes yet. Add one above and press Enter.</div>`;
+      return;
+    }
+
+    previewList.innerHTML = sortedNotes.map((note) => {
+      const body = note.body || "";
+      const title = note.title || body.split(/\s+/).slice(0, 6).join(" ") || "Untitled note";
+      return `
+        <div class="preview-item">
+          <div class="preview-row note-row">
+            <span class="preview-note-title">${escapeHtml(title)}</span>
+            <span class="preview-time">${formatRelativeTime(note.ts)}</span>
+          </div>
+          <div class="preview-note-body">${escapeHtml(body)}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function loadSavedLists() {
+    if (!window.chrome || !chrome.storage || !chrome.storage.sync) {
+      hasLoadedLists = true;
+      renderPreview();
+      return;
+    }
+
+    chrome.storage.sync.get(["todos", "notes"], (result) => {
+      localTodos = result.todos || [];
+      localNotes = result.notes || [];
+      hasLoadedLists = true;
+      renderPreview();
+    });
+  }
 
   function updateMode(nextMode) {
     currentMode = [MODE_IDEA, MODE_TODO, MODE_NOTE].includes(nextMode) ? nextMode : MODE_IDEA;
@@ -254,6 +542,7 @@
     } else {
       input.placeholder = "Capture a quick thought or idea...";
     }
+    renderPreview();
   }
 
   tabButtons.forEach((button) => {
@@ -263,6 +552,7 @@
     });
   });
 
+  loadSavedLists();
   updateMode(MODE_IDEA);
 
   // Focus input field immediately
