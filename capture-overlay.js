@@ -37,6 +37,8 @@
       :host {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         box-sizing: border-box;
+        user-select: text;
+        -webkit-user-select: text;
 
         /* Light Theme variables */
         --bg-card: rgba(247, 248, 245, 0.96);
@@ -128,6 +130,8 @@
         transform: translateY(-20px);
         opacity: 0;
         animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+        user-select: text;
+        -webkit-user-select: text;
       }
       
       .header {
@@ -354,10 +358,7 @@
         color: var(--ink-soft);
         font-size: 0.8rem;
         line-height: 1.38;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        white-space: pre-wrap;
       }
  
       .preview-empty,
@@ -367,6 +368,34 @@
         line-height: 1.4;
         padding: 1.15rem 0.875rem;
         text-align: center;
+      }
+
+      .preview-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .preview-action-btn {
+        border: none;
+        background: transparent;
+        color: var(--ink-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .preview-action-btn:hover {
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .preview-action-btn:active {
+        transform: scale(0.9);
       }
  
       @media (max-width: 560px) {
@@ -458,13 +487,25 @@
     });
   });
 
+  // Handle manual selection copying inside Shadow DOM (shadow.getSelection())
+  root.addEventListener("copy", (e) => {
+    const selection = shadow.getSelection();
+    const selectedText = selection ? selection.toString() : "";
+    if (selectedText) {
+      e.clipboardData.setData("text/plain", selectedText);
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
   // Also prevent focus from escaping
   root.addEventListener("focusout", (e) => {
     // If focus is leaving the overlay entirely, pull it back to the input
     setTimeout(() => {
       const active = shadow.activeElement || document.activeElement;
       const input = shadow.getElementById("idea-input");
-      if (input && active !== input && document.getElementById(OVERLAY_ID)) {
+      const isInside = shadow.contains(active) || active === root;
+      if (input && !isInside && document.getElementById(OVERLAY_ID)) {
         input.focus();
       }
     }, 0);
@@ -561,7 +602,15 @@
         <div class="preview-item">
           <div class="preview-row note-row">
             <span class="preview-note-title">${escapeHtml(title)}</span>
-            <span class="preview-time">${formatRelativeTime(note.ts)}</span>
+            <div class="preview-actions">
+              <span class="preview-time">${formatRelativeTime(note.ts)}</span>
+              <button class="preview-action-btn" data-action="copy" data-content="${escapeHtml(body)}" title="Copy note content">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+                  <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.078a3 3 0 0 0-.88-2.122L10.5 5.68V5h-.5A1.5 1.5 0 0 1 8.5 3.5H7z" />
+                  <path d="M3.75 6A1.75 1.75 0 0 0 2 7.75v8.5c0 .966.784 1.75 1.75 1.75h5.5A1.75 1.75 0 0 0 11 16.25v-8.5A1.75 1.75 0 0 0 9.25 6h-5.5z" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div class="preview-note-body">${escapeHtml(body)}</div>
         </div>
@@ -614,6 +663,36 @@
       updateMode(button.dataset.mode);
       input.focus();
     });
+  });
+
+  // Handle copy clicks inside preview list
+  previewList.addEventListener("click", (e) => {
+    const btn = e.target.closest(".preview-action-btn[data-action='copy']");
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const content = btn.dataset.content;
+      navigator.clipboard.writeText(content).then(() => {
+        // Show checkmark icon temporarily
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `
+          <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+            <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143z" clip-rule="evenodd" />
+          </svg>
+        `;
+        btn.style.color = "var(--accent)";
+        btn.title = "Copied!";
+        
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.color = "";
+          btn.title = "Copy note content";
+        }, 1500);
+      }).catch(err => {
+        console.error("Failed to copy text:", err);
+      });
+    }
   });
 
   loadSavedLists();
