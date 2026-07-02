@@ -6,7 +6,7 @@
 
 **A browser-resident idea inbox and today's to-do board.**
 <br>
-Capture stray thoughts instantly without losing focus, and organize your daily priorities in beautiful custom new tab page.
+Capture stray thoughts without losing focus, and organize your daily priorities in a focused custom new tab page.
 
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome_Extension-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Chrome Extension">
@@ -33,7 +33,7 @@ Instead of juggling multiple productivity apps, QuickStash lives directly in you
 - **The Inbox**: A dumping ground for raw ideas and captured links.
 - **Today's To-Dos**: A dedicated list for tasks you want to finish today.
 - **Quick Notes**: A scratchpad for longer fragments, meeting takeaways, draft copy, and research trails.
-- **Private by Design**: Data is stored with Chrome extension storage. QuickStash does not require an account or send your data to an app server.
+- **Private by Design**: Data is stored with Chrome extension storage using `chrome.storage.sync`. QuickStash does not require an account, run an app server, or track analytics. If Chrome sync is enabled, Chrome may sync extension data through your Google account.
 
 ## Installation
 
@@ -48,6 +48,24 @@ Since this extension is currently in developer mode, you can install it manually
 4. Click on the **Load unpacked** button in the top left.
 5. Select the `QuickStash` folder you just cloned.
 6. The extension is now installed! Open a new tab to see your new Focus Board.
+
+## Privacy
+
+QuickStash stores user-created ideas, tasks, notes, captured page titles/URLs, and theme preference with Chrome extension storage. It does not use a QuickStash account, app server, ads, or analytics.
+
+See [docs/privacy.md](docs/privacy.md) for the full privacy policy draft.
+
+## Launch Materials
+
+Launch drafts, Chrome Web Store listing copy, and the product video brief live in:
+
+- [docs/launch-kit.md](docs/launch-kit.md)
+- [docs/chrome-web-store-listing.md](docs/chrome-web-store-listing.md)
+- [docs/video-brief.md](docs/video-brief.md)
+
+Promo video:
+
+- [videos/quickstash/renders/quickstash-promo.mp4](videos/quickstash/renders/quickstash-promo.mp4)
 
 ## Shortcuts
 
