@@ -6,7 +6,7 @@
   <title>QuickStash — Focus Board</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="newtab.css">
 </head>
 <body>
@@ -18,6 +18,18 @@
       </div>
       <div class="date-area" id="current-date">Today</div>
     </header>
+
+    <section class="focus-strip" aria-label="Workspace summary">
+      <div class="focus-copy">
+        <p class="eyebrow">Browser desk</p>
+        <h2>Catch the loose thought, then choose what deserves today.</h2>
+      </div>
+      <div class="pulse-line" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </section>
 
     <main class="board-grid">
       <!-- Left Column: Ideas Inbox -->
@@ -46,7 +58,7 @@
           <p class="column-subtitle">Committed tasks to get done</p>
         </div>
         
-        <div class="todo-input-container">
+        <div class="input-container">
           <input 
             type="text" 
             id="todo-input" 
@@ -60,6 +72,47 @@
         <div class="column-content">
           <div class="todos-list" id="todos-list" role="list">
             <!-- To-dos injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Notes -->
+      <section class="board-column" id="notes-section" aria-labelledby="notes-title">
+        <div class="column-header">
+          <div class="column-title-wrap">
+            <h2 id="notes-title">Quick Notes</h2>
+            <span class="badge" id="notes-count">0</span>
+          </div>
+          <p class="column-subtitle">Scratchpad notes that are more than a task</p>
+        </div>
+
+        <form class="note-composer" id="note-form">
+          <div class="input-block">
+            <label for="note-title-input">Title</label>
+            <input
+              type="text"
+              id="note-title-input"
+              placeholder="Meeting thread, book idea, bug trail..."
+              autocomplete="off"
+            >
+            <p class="helper-text">Optional, but useful when the note gets longer.</p>
+          </div>
+          <div class="input-block">
+            <label for="note-body-input">Note</label>
+            <textarea
+              id="note-body-input"
+              placeholder="Write the thing before it evaporates."
+              rows="5"
+            ></textarea>
+            <p class="helper-text" id="note-helper">Press Cmd+Enter or Ctrl+Enter to save.</p>
+            <p class="error-text" id="note-error" aria-live="polite"></p>
+          </div>
+          <button type="submit" class="primary-action">Save note</button>
+        </form>
+
+        <div class="column-content notes-content">
+          <div class="notes-list" id="notes-list" role="list">
+            <!-- Notes injected by JS -->
           </div>
         </div>
       </section>

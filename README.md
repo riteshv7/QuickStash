@@ -20,21 +20,22 @@ Capture stray thoughts instantly without losing focus, and organize your daily p
 
 ---
 
-## 🚀 Overview
+## Overview
 
 **QuickStash** is a lightweight, distraction-free Chrome extension designed to help you separate idea capture from daily task execution. 
 
-Instead of juggling multiple productivity apps, QuickStash lives directly in your browser. Whenever inspiration strikes while you're browsing, use a simple keyboard shortcut to capture it instantly. Then, whenever you open a new tab, you are greeted with a beautiful, minimalist **Focus Board** to manage those captured ideas and commit to your daily to-dos.
+Instead of juggling multiple productivity apps, QuickStash lives directly in your browser. Whenever inspiration strikes while you're browsing, use a simple keyboard shortcut to capture it instantly. Then, whenever you open the dashboard, you are greeted with a focused workspace for captured ideas, daily tasks, and quick notes.
 
-## ✨ Key Features
+## Key Features
 
-- ⚡ **Instant Idea Capture**: Hit `Cmd+Shift+Y` (Mac) or `Ctrl+Shift+Y` (Windows) on *any* page to instantly save a thought, link, or note without switching tabs.
-- 🎯 **Focus Board (New Tab)**: Overrides your default new tab page with a clean, two-column interface.
-- 📥 **The Inbox**: A dumping ground for all your raw, unrefined ideas and captured links.
-- ✅ **Today's To-Dos**: A dedicated column to commit to actionable tasks you want to accomplish *today*.
-- 🔒 **Privacy First**: Everything is stored locally in your browser using Chrome's local storage. No accounts, no cloud syncing, no data tracking.
+- **Instant Capture**: Hit `Cmd+Shift+Y` on Mac or `Ctrl+Shift+Y` on Windows to save an idea, to-do, or note without switching tabs.
+- **Focus Board**: A redesigned workspace with an asymmetric layout for ideas, today's tasks, and quick notes.
+- **The Inbox**: A dumping ground for raw ideas and captured links.
+- **Today's To-Dos**: A dedicated list for tasks you want to finish today.
+- **Quick Notes**: A scratchpad for longer fragments, meeting takeaways, draft copy, and research trails.
+- **Private by Design**: Data is stored with Chrome extension storage. QuickStash does not require an account or send your data to an app server.
 
-## 🛠️ Installation
+## Installation
 
 Since this extension is currently in developer mode, you can install it manually by following these steps:
 
@@ -48,23 +49,23 @@ Since this extension is currently in developer mode, you can install it manually
 5. Select the `QuickStash` folder you just cloned.
 6. The extension is now installed! Open a new tab to see your new Focus Board.
 
-## ⌨️ Shortcuts
+## Shortcuts
 
 | Action | Mac | Windows / Linux |
 | :--- | :--- | :--- |
 | **Capture Idea Overlay** | `Cmd + Shift + Y` | `Ctrl + Shift + Y` |
 
-## 🎨 Design & Architecture
+## Design & Architecture
 
 - **Manifest V3**: Built using the latest and most secure Chrome extension architecture.
 - **Service Workers**: Utilizes a background service worker (`background.js`) to handle keyboard commands and message passing efficiently.
 - **Content Scripts**: Injects a lightweight overlay (`capture-overlay.js`) for the quick capture UI without disrupting the host page's DOM.
-- **Vanilla Tech Stack**: Built entirely with Vanilla JavaScript, HTML5, and CSS3. No heavy frameworks, ensuring blazing fast load times for your new tabs.
+- **Vanilla Tech Stack**: Built entirely with Vanilla JavaScript, HTML5, and CSS3. No heavy frameworks, keeping the dashboard fast.
 
-## 📝 License
+## License
 
 This project is open-source and available under the [MIT License](LICENSE).
 
 <div align="center">
-  <p>Built with ❤️ by Ritesh Verma</p>
+  <p>Built by Ritesh Verma</p>
 </div>
