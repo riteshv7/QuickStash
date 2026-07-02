@@ -53,19 +53,11 @@ Since this extension is currently in developer mode, you can install it manually
 
 QuickStash stores user-created ideas, tasks, notes, captured page titles/URLs, and theme preference with Chrome extension storage. It does not use a QuickStash account, app server, ads, or analytics.
 
-See [docs/privacy.md](docs/privacy.md) for the full privacy policy draft.
+See [docs/privacy.md](docs/privacy.md) for the privacy policy.
 
-## Launch Materials
+## Demo
 
-Launch drafts, Chrome Web Store listing copy, and the product video brief live in:
-
-- [docs/launch-kit.md](docs/launch-kit.md)
-- [docs/chrome-web-store-listing.md](docs/chrome-web-store-listing.md)
-- [docs/video-brief.md](docs/video-brief.md)
-
-Promo video:
-
-- [videos/quickstash/renders/quickstash-promo.mp4](videos/quickstash/renders/quickstash-promo.mp4)
+- [Watch the QuickStash promo video](media/quickstash-promo.mp4)
 
 ## Shortcuts
 

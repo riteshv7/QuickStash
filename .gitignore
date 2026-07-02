@@ -2,7 +2,4 @@ dist/
 *.zip
 .DS_Store
 .agent-skills/
-videos/quickstash/*
-!videos/quickstash/renders/
-videos/quickstash/renders/*
-!videos/quickstash/renders/quickstash-promo.mp4
+videos/
