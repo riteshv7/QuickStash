@@ -12,9 +12,6 @@
     "service_worker": "background.js"
   },
   "action": {},
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
-  },
   "commands": {
     "capture-idea": {
       "suggested_key": {
